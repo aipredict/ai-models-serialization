@@ -24,16 +24,27 @@
     * [MLeap](https://github.com/combust/mleap)，基于JSON或者Protobuf格式。开源但非标准，由初创公司[Combust](http://www.combust.ml)开发，刚开始主要提供对Spark Pipelines的支持，目前也可以支持Scikit-learn等模型。Combust同时提供了MLeap Runtime来支持MLeap格式模型，基于Scala开发，实现了一个独立的预测运行引擎，不依赖于Spark或者Scikit-learn等库。
     * [Core ML](https://developer.apple.com/machine-learning/core-ml/)，基于Protobuf二进制格式，由苹果公司开发，主要目标为在移动设备上使用AI模型。
 
+  - 模型本身提供的自定义序列化方法
+    * 文本或者二进制格式
+    * 语言专有或者跨语言跨平台自定义格式
+
   - 语言级通用序列化方法
     * Python - [pickle](https://docs.python.org/3/library/pickle.html)
     * Python - [joblib](https://joblib.readthedocs.io/en/latest/persistence.html)
     * R - [rda](https://www.rdocumentation.org/packages/base/versions/3.6.1/topics/save)
 
-    joblib在序列化大numpy数组时有性能优势，pickle的c实现cpickle速度也很快。
+      joblib在序列化大numpy数组时有性能优势，pickle的c实现cpickle速度也很快。
 
-  - 模型自定义方法
-    * 文本或者二进制格式
-    * 语言专有或者跨语言跨平台自定义格式
+  - 用户自定义序列化方法
+    * 以上方法都无法达到要求，用户可以使用自定义序列化格式，以满足自己的特殊部署需求：部署性能、模型大小、环境要求等等。但这种方法在模型升级维护以及版本兼容性上是一个大的挑战。
+
+    如何选择模型序列化方法，可以参考以下顺序，优先使用跨平台跨语言通用序列化方法，最后再考虑使用自定义序列化方法：
+
+    ![DaaS-login](https://raw.githubusercontent.com/aipredict/ai-models-serialization/master/ai-serialization-candidates.jpg)
+
+    在同一类型格式选项中，可以参考以下筛选流程：
+
+    ![DaaS-login](https://raw.githubusercontent.com/aipredict/ai-models-serialization/master/ai-serialization-flow.jpg)
 
 ## Scikit-learn模型序列化方法：
 * PMML：[Nyoka](https://github.com/nyoka-pmml/nyoka#nyoka-to-export-scikit-learn-models)，[SkLearn2PMML](https://github.com/jpmml/sklearn2pmml)
