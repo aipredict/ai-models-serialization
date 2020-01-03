@@ -96,6 +96,46 @@
     # Recreate the exact same model
     new_model = keras.models.load_model('path_to_saved_model')
     ```
+  3. 分别存储模型结构和模型权重值（Weights）。模型结构可以存储为JSON：
+    ```python
+    json_string = model.to_json()
+    model = keras.models.model_from_json(json_string)
+    ```
+    或者YAML：
+    ```python
+    yaml_string = model.to_yaml()
+    model = keras.models.model_from_yaml(yaml_string)
+    ```
+
+    模型权重值可以存储为HDF5格式：
+    ```python
+    model.save_weights('path_to_my_weights.h5')
+    ```
+    或者TF格式：
+    ```python
+    model.save_weights('path_to_my_weights', save_format='tf')
+    ```
+
+    因为该方法没有存储模型训练配置参数和优化器（Optimizer），所以如果您需要再继续训练模型，必须重新调用compile()函数来设置。但是如果只是用于模型预测，这种序列化方式已经足够了，完整的例子：
+    ```python
+    # Save JSON config to disk
+    json_config = model.to_json()
+    with open('model_config.json', 'w') as json_file:
+        json_file.write(json_config)
+
+    # Save weights to disk
+    model.save_weights('path_to_my_weights.h5')
+
+    # Reload the model from the 2 files we saved
+    with open('model_config.json') as json_file:
+        json_config = json_file.read()
+    new_model = keras.models.model_from_json(json_config)
+    new_model.load_weights('path_to_my_weights.h5')
+
+    # Make prediction against the restored model.
+    new_model.predict(x_test)
+    ```
+
 * PMML: [Nyoka](https://github.com/nyoka-pmml/nyoka#nyoka-to-export-keras-models)，导出的是扩展的PMML模型，不属于PMML标准。
 
 * ONNX：[keras2onnx](https://github.com/onnx/keras-onnx/)
